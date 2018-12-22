@@ -4,14 +4,14 @@
 	<parent>
 		<groupId>com.mk.eap</groupId>
 		<artifactId>eap-component</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>0.0.1</version>
 	</parent>
 	<artifactId>eap-component-service</artifactId>
 	<dependencies>		
 		<dependency>
 			<groupId>com.mk.eap</groupId>
 			<artifactId>eap-component-interface</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>0.0.1</version>
 		</dependency>
 		
 		<dependency>

@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.mk.eap</groupId>
 	<artifactId>eap</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<packaging>pom</packaging>
 	<modules>
 	  <module>eap-common</module>
@@ -12,7 +12,7 @@
 	  <module>eap-base</module> 
 	</modules>
 	<properties>
-		<project.version>0.0.1-SNAPSHOT</project.version>
+		<project.version>0.0.1</project.version>
 		<!-- 文件拷贝时的编码  -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -56,7 +56,7 @@
                 <activeByDefault>true</activeByDefault>  
             </activation>
 			<properties>
-				<project.version>0.0.1-SNAPSHOT</project.version>
+				<project.version>0.0.1</project.version>
 			</properties>
 		</profile>
 		<profile>
