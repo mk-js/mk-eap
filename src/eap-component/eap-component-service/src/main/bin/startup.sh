@@ -1,0 +1,1 @@
+nohup java -jar "../component-service.jar" &
