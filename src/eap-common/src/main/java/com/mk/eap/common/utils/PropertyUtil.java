@@ -64,8 +64,8 @@ public class PropertyUtil {
     	if(prop==null)return null;
         String value = prop.getProperty(key);
         if(null != value && value.indexOf("${")==0){ 
-        	String name = value.substring(2);
-        	name = name.substring(0, name.length()-1);
+        	int index = value.indexOf("${");
+        	String name = value.substring(index + 2, value.lastIndexOf("}")); 
             value = java.lang.System.getenv(name);
             //System.out.println(name+":"+value);
         }
