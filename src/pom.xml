@@ -10,6 +10,7 @@
 	  <module>eap-common</module>
 	  <module>eap-component</module>
 	  <module>eap-base</module> 
+	  <module>eap-sys</module> 
 	</modules>
 	<properties>
 		<project.version>0.0.1</project.version>

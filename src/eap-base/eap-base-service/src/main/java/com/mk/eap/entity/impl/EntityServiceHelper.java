@@ -2,6 +2,7 @@ package com.mk.eap.entity.impl;
 
 import java.io.Serializable;
 import java.lang.reflect.Type;
+import java.util.HashMap;
 
 import com.mk.eap.common.domain.DTO;
 import com.mk.eap.common.domain.VO;
@@ -49,78 +50,111 @@ public class EntityServiceHelper {
 		
 		return null;
 	}
+	private static HashMap<String,Class<?>> clzMap = new HashMap<>();
 	
 	private static IEntityService getEntityServiceClass(String tableName, CtClass dtoClz, CtClass voClz,
 			CtClass mapperClz) throws CannotCompileException, NotFoundException, ClassNotFoundException, InstantiationException, IllegalAccessException { 
 		
 		String className = "com.mk.eap.entity.dym." + tableName + "ServiceImpl";
+		Class<?> clz = clzMap.get(className);
+		if(null != clz){
+			return (IEntityService)clz.newInstance();
+		}
         ClassPool pool = ClassPool.getDefault();
-        CtClass subClass = pool.get(className);
+        CtClass subClass = null;
+        try{
+        	subClass = pool.get(className); 
+        }catch(NotFoundException ex){
+        	
+        }
         if(subClass == null){
             subClass = pool.makeClass( className);  
             subClass.setSuperclass(pool.get(EntityServiceImpl.class.getName()));  
             
-    		String genTypeName = "EntityServiceImpl<" + dtoClz.getName() + "," + voClz.getName() + "," + mapperClz.getName() + ">";
+    		String genTypeName = "com.mk.eap.entity.impl.EntityServiceImpl<" + dtoClz.getName() + "," + voClz.getName() + "," + mapperClz.getName() + ">";
             subClass.setGenericSignature(new SignatureAttribute.TypeVariable(genTypeName).encode());
 
-            CtClass[] params = new CtClass[]{ };
-            CtConstructor ctor = CtNewConstructor.make( params, null, CtNewConstructor.PASS_PARAMS, null, null, subClass );
-            subClass.addConstructor(ctor); 
-        }
-        Object serviceImpl = subClass.toClass().newInstance();
+//            CtClass[] params = new CtClass[]{ };
+//            CtConstructor ctor = CtNewConstructor.make( params, null, CtNewConstructor.PASS_PARAMS, null, null, subClass );
+//            subClass.addConstructor(ctor); 
+            clz = subClass.toClass();
+            clzMap.put(className, clz);
+        } 
         
-		return (IEntityService) serviceImpl;
+		return (IEntityService) clz.newInstance();
 	}
 
 	private static CtClass getDtoClass(String tableName, Type vo) throws CannotCompileException, NotFoundException{
-		String className = tableName + "Dto";
+		String className = "com.mk.eap.entity.dym." + tableName + "Dto";
         ClassPool pool = ClassPool.getDefault();
-        CtClass subClass = pool.makeClass("com.mk.eap.entity.dym." + className);  
-        subClass.setSuperclass(pool.get(DTO.class.getName()));  
-        subClass.addInterface(pool.get(Serializable.class.getName())); 
-        subClass.addField(CtField.make("private static final long serialVersionUID = 1L;", subClass)); 
-        subClass.addField(CtField.make("public Long id;", subClass)); 
-        subClass.addField(CtField.make("public String code;", subClass)); 
-        subClass.addField(CtField.make("public String name;", subClass)); 
+        CtClass subClass = null; 
+        try{
+        	subClass = pool.get(className); 
+        }catch(NotFoundException ex){
+        	
+        }
+        if(subClass == null){
+        	subClass = pool.makeClass(className);   
+	        subClass.setSuperclass(pool.get(DTO.class.getName()));  
+	        subClass.addInterface(pool.get(Serializable.class.getName())); 
+	        subClass.addField(CtField.make("private static final long serialVersionUID = 1L;", subClass)); 
+	        subClass.addField(CtField.make("public Long id;", subClass)); 
+	        subClass.addField(CtField.make("public String code;", subClass)); 
+	        subClass.addField(CtField.make("public String name;", subClass)); 
+        }
 		
 		return subClass;
 	}
 
 	private static CtClass getVoClass(String tableName, Type vo) throws CannotCompileException, NotFoundException{
-		String className = tableName ;
+		String className = "com.mk.eap.entity.dym." + tableName ;
         ClassPool pool = ClassPool.getDefault();
-        CtClass subClass = pool.makeClass("com.mk.eap.entity.dym." + className);  
-        subClass.setSuperclass(pool.get(VO.class.getName())); 
-        subClass.addInterface(pool.get(Serializable.class.getName())); 
-        subClass.addField(CtField.make("private static final long serialVersionUID = 1L;", subClass));
-        CtField idField = CtField.make("public Long id;", subClass);
-        
-        ConstPool constpool = subClass.getClassFile().getConstPool();
-		AnnotationsAttribute fieldAttr = new AnnotationsAttribute(constpool , AnnotationsAttribute.visibleTag);
-        Annotation autowired = new Annotation("javax.persistence.Id",constpool);
-        fieldAttr.addAnnotation(autowired); 
-        idField.getFieldInfo().addAttribute(fieldAttr);
-        
-        subClass.addField(idField); 
-        subClass.addField(CtField.make("public String code;", subClass)); 
-        subClass.addField(CtField.make("public String name;", subClass)); 
-		
+        CtClass subClass = null; 
+        try{
+        	subClass = pool.get(className); 
+        }catch(NotFoundException ex){
+        	
+        }
+        if(subClass == null){
+        	subClass = pool.makeClass(className); 
+	        subClass.setSuperclass(pool.get(VO.class.getName())); 
+	        subClass.addInterface(pool.get(Serializable.class.getName())); 
+	        subClass.addField(CtField.make("private static final long serialVersionUID = 1L;", subClass));
+	        CtField idField = CtField.make("public Long id;", subClass);
+	        
+	        ConstPool constpool = subClass.getClassFile().getConstPool();
+			AnnotationsAttribute fieldAttr = new AnnotationsAttribute(constpool , AnnotationsAttribute.visibleTag);
+	        Annotation autowired = new Annotation("javax.persistence.Id",constpool);
+	        fieldAttr.addAnnotation(autowired); 
+	        idField.getFieldInfo().addAttribute(fieldAttr);
+	        
+	        subClass.addField(idField); 
+	        subClass.addField(CtField.make("public String code;", subClass)); 
+	        subClass.addField(CtField.make("public String name;", subClass)); 
+        }
 		return subClass;
 	}
 	
 	private static CtClass getMapperClass(String tableName,CtClass voClz) throws CannotCompileException, NotFoundException{
-		String className = tableName + "Mapper";
+		String className = "com.mk.eap.entity.dym." + tableName + "Mapper";
         ClassPool pool = ClassPool.getDefault();
-        CtClass subClass = pool.makeClass("com.mk.eap.entity.dym." + className);  
-        subClass.setSuperclass(pool.get(EntityMapper.class.getName()));  
-        
-		String genTypeName = "EntityMapper<" + voClz.getName() + ">";
-        subClass.setGenericSignature(new SignatureAttribute.TypeVariable(genTypeName).encode());
-
-        CtClass[] params = new CtClass[]{ };
-        CtConstructor ctor = CtNewConstructor.make( params, null, CtNewConstructor.PASS_PARAMS, null, null, subClass );
-        subClass.addConstructor(ctor);
-        
+        CtClass subClass = null;
+        try{
+        	subClass = pool.get(className); 
+        }catch(NotFoundException ex){
+        	
+        }
+        if(subClass == null){
+        	subClass = pool.makeClass(className);  
+	        subClass.setSuperclass(pool.get(EntityMapper.class.getName()));  
+	        
+			String genTypeName = "EntityMapper<" + voClz.getName() + ">";
+	        subClass.setGenericSignature(new SignatureAttribute.TypeVariable(genTypeName).encode());
+	
+	        CtClass[] params = new CtClass[]{ };
+	        CtConstructor ctor = CtNewConstructor.make( params, null, CtNewConstructor.PASS_PARAMS, null, null, subClass );
+	        subClass.addConstructor(ctor); 
+        }
 		return subClass;
 	}
 }

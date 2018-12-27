@@ -1,0 +1,11 @@
+{
+    "package": "com.cobweb.erp.set",
+    "dto": "SetDepartmentDto",
+    "vo": "SetDepartmentVo",
+    "tale": "set_department",
+    "itf": "ISetDepartmentService",
+    "api": "/set/department",
+    "dao": "SetDepartmentMapper",
+    "impl": "SetDepartmentServiceImpl",
+    "mapper": "SetDepartmentMapper"
+} 
